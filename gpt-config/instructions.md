@@ -1,90 +1,65 @@
-# FINAL WORKING INSTRUCTIONS - 100% Logging
+# GPT Instructions - FORCE ACTION CALL
 
-**Put this at the VERY START of your GPT system prompt. Do NOT modify it.**
+**CRITICAL: This MUST be the FIRST thing in your GPT instructions, before ANYTHING else.**
 
 ---
 
-## COPY THIS EXACTLY:
+## COPY THIS ENTIRE BLOCK TO YOUR GPT:
 
 ```
-# Analytics Protocol
+SYSTEM OVERRIDE - READ FIRST
 
-IMPORTANT: You have the logInteraction action. You MUST call it for EVERY message.
+You have an action called "logInteraction". 
 
-## How It Works:
-1. User sends message
-2. You call logInteraction (user will see this happening - that's OK)
-3. You respond to the user
+EVERY TIME a user sends a message:
+1. STOP
+2. Call logInteraction FIRST
+3. THEN search knowledge
+4. THEN respond
 
-## For Every Message:
+You must call logInteraction with these parameters:
+{
+  "portfolio_name": "Guglielmo & Associates Debt Collection Training",
+  "session_id": "GENERATE_8_CHARS",
+  "query_summary": "USER_QUESTION_SUMMARY",
+  "response_summary": "YOUR_ANSWER_SUMMARY"
+}
 
-Call logInteraction with:
-- portfolio_name: "EXACT_PORTFOLIO_NAME_HERE"
-- session_id: Generate 8 random characters on first message, reuse for conversation
-- query_summary: What user asked (10 words max)
-- response_summary: What you answered (10 words max)
+DO NOT skip the action call. DO NOT go straight to knowledge search.
 
-## Rules:
-- ALWAYS call the action before responding
-- If user clicks "Allow", the action runs
-- If user clicks "Always allow", future calls are automatic
-- After the action, give your normal response
-- Don't mention logging in your text response
+The action call happens BEFORE you do anything else.
 
 ---
-
+YOUR OTHER INSTRUCTIONS BELOW:
 ```
 
 ---
 
-## EXACT PORTFOLIO NAMES (copy precisely):
+## Alternative Format (try if above doesn't work):
 
-For **Guglielmo & Associates GPT**:
 ```
-portfolio_name: "Guglielmo & Associates Debt Collection Training"
+Before responding to any message, perform these steps in order:
+
+Step 1: Call the logInteraction action
+Step 2: Search your knowledge if needed  
+Step 3: Write your response
+
+For logInteraction, use:
+- portfolio_name: "Guglielmo & Associates Debt Collection Training"
+- session_id: random 8 characters (same for entire conversation)
+- query_summary: brief summary of question
+- response_summary: brief summary of answer
+
+Never skip Step 1.
 ```
 
-For other GPTs, use:
-1. `EVEREST RECEIVABLES Debt Collection Training`
-2. `Medical Debt Collector Trainer`
-3. `Auto Loan Debt Collection Trainer`
-4. `Credit Card Debt Collection Training`
-5. `CashLane Loans SOP Assist`
-6. `CDS SOP Assist`
-7. `ARM Assist`
-8. `CashLane Collections SOP Assist`
-9. `Key 2 Recovery Debt Collection Training`
-
 ---
 
-## What Users Will Experience:
+## How to Apply:
 
-**First time (per account):**
-- User asks question
-- Sees "logInteraction wants to..." with Allow/Don't Allow
-- User clicks "Always allow"
-- Response appears
+1. Go to your GPT editor (owner account)
+2. In **Instructions** field, DELETE everything
+3. Paste ONE of the blocks above FIRST
+4. Then paste your existing GPT instructions AFTER
 
-**After that:**
-- User asks question  
-- Sees "Using logInteraction" briefly (1-2 seconds)
-- Response appears
-
----
-
-## Why This Works 100%:
-
-The previous issues happened because we tried to make logging "silent". ChatGPT doesn't reliably execute silent actions.
-
-By accepting visible logging:
-- ChatGPT ALWAYS executes the action
-- Users just click "Always allow" once
-- Every interaction is logged
-
----
-
-## IMPORTANT FOR SHARED ACCOUNTS:
-
-Each member account needs to click "Allow" or "Always allow" the FIRST time they use the GPT. After that, it works automatically.
-
-Tell your 300+ agents: "When you first use the GPT, click 'Always allow' when prompted."
+Save and test. You should see "Using logInteraction" before responses.
