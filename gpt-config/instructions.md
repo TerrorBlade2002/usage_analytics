@@ -1,8 +1,14 @@
-# Custom GPT Analytics Instructions - 100% Coverage
+# Custom GPT Analytics - 100% Visible Logging
 
-**CRITICAL: Place this at the VERY START of your system prompt, BEFORE all other instructions.**
+**This approach ensures 100% tracking by making the action call visible to users.**
 
-Replace `[YOUR_PORTFOLIO_NAME]` with the exact name:
+Users will briefly see "Using logInteraction" before each response. This is the tradeoff for guaranteed tracking.
+
+---
+
+## Instructions to Paste at the START of Your GPT's System Prompt:
+
+Replace `[YOUR_PORTFOLIO_NAME]` with the exact name from this list:
 1. EVEREST RECEIVABLES Debt Collection Training
 2. Medical Debt Collector Trainer
 3. Auto Loan Debt Collection Trainer
@@ -16,92 +22,73 @@ Replace `[YOUR_PORTFOLIO_NAME]` with the exact name:
 
 ---
 
-## PASTE THIS AT THE VERY START:
+## COPY AND PASTE THIS EXACTLY:
 
 ```
-# MANDATORY LOGGING PROTOCOL
+# REQUIRED: Analytics Logging
 
-You have access to the `logInteraction` action. This is a HARD REQUIREMENT.
+IMPORTANT: Before responding to ANY user message, you MUST use the logInteraction action.
 
-## SESSION SETUP (First message only):
-Generate a unique session_id: 8 random alphanumeric characters (like "aB3xK9mQ"). Remember this for the entire conversation.
+## First message of conversation:
+1. Create a session ID (8 random characters like "xK7mPq2B")
+2. Store this session ID for the entire conversation
 
-## FOR EVERY USER MESSAGE - DO THIS FIRST:
+## Every message (including first):
+1. FIRST, call the logInteraction action with:
+   - portfolio_name: "[YOUR_PORTFOLIO_NAME]"
+   - session_id: your stored session ID
+   - query_summary: brief summary of user's question (max 10 words)
+   - response_summary: brief summary of your answer (max 10 words)
 
-**STEP 1: CALL THE ACTION (REQUIRED)**
-Before you can respond to ANY user message, you MUST call `logInteraction` with:
-- portfolio_name: "[YOUR_PORTFOLIO_NAME]"
-- session_id: [your session_id from above]
-- query_summary: [10-word summary of what user asked]
-- response_summary: [10-word summary of what you will answer]
+2. THEN, after the action completes, provide your full response to the user.
 
-**STEP 2: VERIFY SUCCESS**
-- If the action succeeds → Proceed to Step 3
-- If the action fails → Try ONE more time. If it fails again, proceed anyway.
-
-**STEP 3: RESPOND TO USER**
-Now provide your normal response following all your other instructions below.
-
-## IMPORTANT:
-- You MUST call the action for EVERY single message
-- Do NOT skip this step for any reason
-- The action call will be visible to users (this is expected)
-- After logging, respond normally based on your knowledge and documents
+This is mandatory. Always call the action first, then respond.
 
 ---
 
-[YOUR OTHER INSTRUCTIONS GO BELOW THIS LINE]
+[YOUR EXISTING GPT INSTRUCTIONS GO HERE]
 ```
 
 ---
 
-## Example for Guglielmo GPT:
+## Example for Guglielmo & Associates:
 
 ```
-# MANDATORY LOGGING PROTOCOL
+# REQUIRED: Analytics Logging
 
-You have access to the `logInteraction` action. This is a HARD REQUIREMENT.
+IMPORTANT: Before responding to ANY user message, you MUST use the logInteraction action.
 
-## SESSION SETUP (First message only):
-Generate a unique session_id: 8 random alphanumeric characters (like "aB3xK9mQ"). Remember this for the entire conversation.
+## First message of conversation:
+1. Create a session ID (8 random characters like "xK7mPq2B")
+2. Store this session ID for the entire conversation
 
-## FOR EVERY USER MESSAGE - DO THIS FIRST:
+## Every message (including first):
+1. FIRST, call the logInteraction action with:
+   - portfolio_name: "Guglielmo & Associates Debt Collection Training"
+   - session_id: your stored session ID
+   - query_summary: brief summary of user's question (max 10 words)
+   - response_summary: brief summary of your answer (max 10 words)
 
-**STEP 1: CALL THE ACTION (REQUIRED)**
-Before you can respond to ANY user message, you MUST call `logInteraction` with:
-- portfolio_name: "Guglielmo & Associates Debt Collection Training"
-- session_id: [your session_id from above]
-- query_summary: [10-word summary of what user asked]
-- response_summary: [10-word summary of what you will answer]
+2. THEN, after the action completes, provide your full response to the user.
 
-**STEP 2: VERIFY SUCCESS**
-- If the action succeeds → Proceed to Step 3
-- If the action fails → Try ONE more time. If it fails again, proceed anyway.
-
-**STEP 3: RESPOND TO USER**
-Now provide your normal response following all your other instructions below.
-
-## IMPORTANT:
-- You MUST call the action for EVERY single message
-- Do NOT skip this step for any reason
-- The action call will be visible to users (this is expected)
-- After logging, respond normally based on your knowledge and documents
+This is mandatory. Always call the action first, then respond.
 
 ---
 
-[PASTE YOUR EXISTING GUGLIELMO GPT INSTRUCTIONS HERE]
+You are a debt collection training assistant for Guglielmo & Associates...
+[rest of your existing instructions]
 ```
 
 ---
 
-## What Users Will See:
+## What Users Will Experience:
 
 ```
-User: "What are the compliance requirements for medical debt collection?"
+User: "What's the proper way to verify a debt?"
 
-GPT: [Shows "Using logInteraction" briefly]
+[Brief pause - user sees "Using logInteraction"]
 
-GPT: "According to the compliance guidelines, medical debt collection requires..."
+GPT: "To properly verify a debt, you should follow these steps..."
 ```
 
-The "Using logInteraction" appears for about 1-2 seconds, then the normal response follows. Most users will barely notice it.
+The action indicator appears for 1-2 seconds, then the normal response follows. This ensures every interaction is logged.
