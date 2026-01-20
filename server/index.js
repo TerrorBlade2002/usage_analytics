@@ -55,10 +55,9 @@ app.get('/health', (req, res) => {
     });
 });
 
-// OpenAPI schema endpoint (for Custom GPT configuration)
+// OpenAPI schema endpoint (for Custom GPT configuration) - JSON
 app.get('/openapi.json', (req, res) => {
     const host = req.get('host');
-    // Always use HTTPS for production (Render terminates SSL at load balancer)
     const protocol = host.includes('localhost') ? 'http' : 'https';
     const baseUrl = `${protocol}://${host}`;
 
@@ -66,7 +65,7 @@ app.get('/openapi.json', (req, res) => {
         openapi: '3.1.0',
         info: {
             title: 'GPT Analytics API',
-            description: 'Track usage analytics for Custom GPTs',
+            description: 'MANDATORY: This action MUST be called before every response. Track usage analytics for Custom GPTs.',
             version: '1.0.0'
         },
         servers: [
@@ -77,8 +76,8 @@ app.get('/openapi.json', (req, res) => {
                 post: {
                     operationId: 'logInteraction',
                     'x-openai-isConsequential': false,
-                    summary: 'Log a user interaction',
-                    description: 'Called after each user message to track analytics',
+                    summary: 'REQUIRED: Call this action before every response',
+                    description: 'You MUST call this action before responding to any user message. This is mandatory for analytics tracking. Call this FIRST, then respond to the user.',
                     requestBody: {
                         required: true,
                         content: {
@@ -89,7 +88,7 @@ app.get('/openapi.json', (req, res) => {
                                     properties: {
                                         portfolio_name: {
                                             type: 'string',
-                                            description: 'Name of the portfolio/GPT (e.g., "Credit Card Debt Collection")'
+                                            description: 'Name of the portfolio/GPT - REQUIRED'
                                         },
                                         session_id: {
                                             type: 'string',
@@ -97,16 +96,16 @@ app.get('/openapi.json', (req, res) => {
                                         },
                                         query_summary: {
                                             type: 'string',
-                                            description: 'Brief summary of what the user asked (max 100 words)'
+                                            description: 'Brief summary of what the user asked - REQUIRED'
                                         },
                                         response_summary: {
                                             type: 'string',
-                                            description: 'Brief summary of your response (max 50 words)'
+                                            description: 'Brief summary of your response'
                                         },
                                         input_type: {
                                             type: 'string',
                                             enum: ['text', 'voice'],
-                                            description: 'Type of input (text or voice if speech patterns detected)'
+                                            description: 'Type of input'
                                         }
                                     }
                                 }
@@ -115,7 +114,7 @@ app.get('/openapi.json', (req, res) => {
                     },
                     responses: {
                         '200': {
-                            description: 'Interaction logged successfully',
+                            description: 'Logged successfully - now respond to user',
                             content: {
                                 'application/json': {
                                     schema: {
@@ -134,6 +133,66 @@ app.get('/openapi.json', (req, res) => {
             }
         }
     });
+});
+
+// OpenAPI schema endpoint - YAML format
+app.get('/openapi.yaml', (req, res) => {
+    const host = req.get('host');
+    const protocol = host.includes('localhost') ? 'http' : 'https';
+    const baseUrl = `${protocol}://${host}`;
+
+    const yaml = `openapi: "3.1.0"
+info:
+  title: GPT Analytics API
+  description: "MANDATORY: Call logInteraction before EVERY response"
+  version: "1.0.0"
+servers:
+  - url: ${baseUrl}
+paths:
+  /api/log:
+    post:
+      operationId: logInteraction
+      x-openai-isConsequential: false
+      summary: "REQUIRED: Call before every response"
+      description: "You MUST call this action FIRST before responding to any user message."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - portfolio_name
+                - query_summary
+              properties:
+                portfolio_name:
+                  type: string
+                  description: Name of the portfolio/GPT
+                session_id:
+                  type: string
+                  description: Session ID (generate once, reuse)
+                query_summary:
+                  type: string
+                  description: What user asked
+                response_summary:
+                  type: string
+                  description: What you answered
+      responses:
+        "200":
+          description: Logged - now respond to user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  interaction_id:
+                    type: integer
+`;
+
+    res.set('Content-Type', 'text/yaml');
+    res.send(yaml);
 });
 
 // Serve dashboard static files
