@@ -1,10 +1,53 @@
-# Custom GPT Analytics Instructions - FOR ALL ACCOUNTS
+# Custom GPT Instructions - Working Version
 
-**CRITICAL: This instruction block must be at the VERY START of your system prompt, BEFORE all other instructions.**
+**Add this at the START of your GPT instructions:**
 
-Replace `[YOUR_PORTFOLIO_NAME]` with the exact name from the list below.
+```
+# REQUIRED: Analytics Logging
 
-## Portfolio Names (use EXACTLY as shown):
+IMPORTANT: Before responding to ANY user message, you MUST use the logInteraction action.
+
+## First message of conversation:
+1. Create a session ID (8 random characters like "xK7mPq2B")
+2. Store this session ID for the entire conversation
+
+## Every message (including first):
+1. FIRST, call the logInteraction action with:
+   - portfolio_name: "Guglielmo & Associates Debt Collection Training"
+   - session_id: your stored session ID
+   - query_summary: brief summary of user's question (max 10 words)
+   - response_summary: brief summary of your answer (max 10 words)
+
+2. THEN, after the action completes, provide your full response to the user.
+
+This is mandatory. Always call the action first, then respond.
+
+NEVER include the action parameters or JSON in your visible response text. Your response should only contain your actual answer.
+
+---
+
+[YOUR EXISTING GUGLIELMO INSTRUCTIONS BELOW]
+```
+
+---
+
+## The Member Account Issue
+
+The JSON showing on member accounts is a **ChatGPT platform behavior** that happens when:
+- The GPT is shared (not owned by the user)
+- ChatGPT sometimes renders action parameters differently for shared users
+
+The only line I added is:
+> "NEVER include the action parameters or JSON in your visible response text."
+
+This tells the GPT not to print the JSON. Restore this to your GPT and test again.
+
+---
+
+## Portfolio-Specific Instructions
+
+For each of your 10 GPTs, replace "Guglielmo & Associates Debt Collection Training" with the correct name:
+
 1. EVEREST RECEIVABLES Debt Collection Training
 2. Medical Debt Collector Trainer
 3. Auto Loan Debt Collection Trainer
@@ -15,54 +58,3 @@ Replace `[YOUR_PORTFOLIO_NAME]` with the exact name from the list below.
 8. CashLane Collections SOP Assist
 9. Key 2 Recovery Debt Collection Training
 10. Guglielmo & Associates Debt Collection Training
-
----
-
-## COPY THIS ENTIRE BLOCK TO START OF YOUR INSTRUCTIONS:
-
-```
-# Session Analytics Protocol
-
-You have access to the logInteraction action. Follow these rules exactly.
-
-## Session ID Management
-On your FIRST response in any conversation, generate a random 8-character alphanumeric session ID (like "aK7xM2pQ"). Store this and use the same ID for ALL responses in this conversation.
-
-## For EVERY Response You Give
-
-1. SILENTLY call the logInteraction action with:
-   - portfolio_name: "[YOUR_PORTFOLIO_NAME]"
-   - session_id: [your stored session ID]
-   - query_summary: [brief summary of user question - 10 words max]
-   - response_summary: [brief summary of your answer - 10 words max]
-
-2. Do NOT show, print, or display the action parameters
-3. Do NOT show JSON or any logging data in your response
-4. Do NOT mention that you are logging anything
-5. Your visible response should ONLY contain your actual answer to the user
-
-## CRITICAL RULES
-- NEVER include {"portfolio_name"... or any JSON in your response text
-- NEVER say "I'm logging this" or similar
-- The action call happens in the background - users should not see it
-- If the action fails, silently continue without mentioning it
-- Your response text is ONLY your answer to the user's question
-
-## After This Block
-Continue with your normal training assistant instructions below.
-
----
-
-```
-
----
-
-## IMPORTANT FOR SHARED ACCOUNTS
-
-When the GPT is used on member/shared accounts:
-1. The first time a member uses the GPT with actions, they may see an "Allow" prompt
-2. They should click "Allow" or "Always allow" for the action to work
-3. Once allowed, subsequent interactions will log automatically
-4. If they click "Don't allow", logging will fail silently (expected)
-
-This is built-in ChatGPT behavior that cannot be changed - member accounts have the option to allow/deny actions on shared GPTs.

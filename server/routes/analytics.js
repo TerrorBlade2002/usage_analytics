@@ -5,6 +5,15 @@ const db = require('../db');
 
 // POST /api/log - Log an interaction (called by GPT)
 router.post('/log', async (req, res) => {
+    // Verbose logging for debugging
+    const timestamp = new Date().toISOString();
+    console.log(`\n========== INCOMING LOG REQUEST ==========`);
+    console.log(`[${timestamp}] POST /api/log`);
+    console.log(`Origin: ${req.get('origin') || 'none'}`);
+    console.log(`User-Agent: ${req.get('user-agent')?.substring(0, 100) || 'none'}`);
+    console.log(`Body:`, JSON.stringify(req.body, null, 2));
+    console.log(`==========================================\n`);
+
     try {
         const {
             portfolio_id,
@@ -17,6 +26,7 @@ router.post('/log', async (req, res) => {
 
         // Validate required fields
         if (!portfolio_id && !portfolio_name) {
+            console.log(`[${timestamp}] ERROR: Missing portfolio_id and portfolio_name`);
             return res.status(400).json({
                 error: 'Either portfolio_id or portfolio_name is required'
             });
@@ -31,7 +41,9 @@ router.post('/log', async (req, res) => {
             );
             if (match) {
                 resolvedPortfolioId = match.id;
+                console.log(`[${timestamp}] Resolved portfolio: ${portfolio_name} -> ID ${match.id}`);
             } else {
+                console.log(`[${timestamp}] ERROR: Portfolio not found: ${portfolio_name}`);
                 return res.status(400).json({
                     error: `Portfolio not found: ${portfolio_name}`
                 });
@@ -49,6 +61,8 @@ router.post('/log', async (req, res) => {
             inputType: input_type || 'text'
         });
 
+        console.log(`[${timestamp}] SUCCESS: Logged interaction ID ${result.id}`);
+
         res.json({
             success: true,
             interaction_id: result.id,
@@ -56,7 +70,7 @@ router.post('/log', async (req, res) => {
             session_id: finalSessionId
         });
     } catch (error) {
-        console.error('Error logging interaction:', error);
+        console.error(`[${new Date().toISOString()}] ERROR:`, error);
         res.status(500).json({ error: 'Failed to log interaction' });
     }
 });
