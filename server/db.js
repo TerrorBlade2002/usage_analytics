@@ -167,6 +167,23 @@ async function getPortfolios() {
   return result.rows;
 }
 
+// Get recent queries for a portfolio (for drill-down view)
+async function getRecentQueries(portfolioId, limit = 50) {
+  const result = await pool.query(`
+    SELECT 
+      query_summary,
+      timestamp,
+      session_id
+    FROM interactions
+    WHERE portfolio_id = $1
+      AND query_summary IS NOT NULL 
+      AND query_summary != ''
+    ORDER BY timestamp DESC
+    LIMIT $2
+  `, [portfolioId, limit]);
+  return result.rows;
+}
+
 module.exports = {
   pool,
   initializeDatabase,
@@ -175,5 +192,6 @@ module.exports = {
   getDaywiseStats,
   getAllPortfoliosWithStats,
   getTodayStats,
-  getPortfolios
+  getPortfolios,
+  getRecentQueries
 };

@@ -351,6 +351,9 @@ async function openPortfolioModal(portfolioId, portfolioName) {
         imgEl.style.display = 'none';
     }
 
+    // Reset queries section
+    document.getElementById('recent-queries-list').innerHTML = '<p class="loading-text">Loading queries...</p>';
+
     // Show modal
     modal.classList.add('active');
 
@@ -361,6 +364,7 @@ async function openPortfolioModal(portfolioId, portfolioName) {
 
         const stats = data.stats;
         const daywise = data.daywise || [];
+        const recentQueries = data.recent_queries || [];
 
         // Update stats
         document.getElementById('modal-total-interactions').textContent = formatNumber(stats.total_interactions);
@@ -375,9 +379,49 @@ async function openPortfolioModal(portfolioId, portfolioName) {
         // Initialize modal charts
         initModalCharts(daywise);
 
+        // Display recent queries
+        displayRecentQueries(recentQueries);
+
     } catch (error) {
         console.error('Error loading portfolio details:', error);
     }
+}
+
+// Display recent queries in modal
+function displayRecentQueries(queries) {
+    const container = document.getElementById('recent-queries-list');
+
+    if (!queries || queries.length === 0) {
+        container.innerHTML = '<p class="no-queries">No queries recorded yet</p>';
+        return;
+    }
+
+    container.innerHTML = queries.map(q => `
+        <div class="query-item">
+            <span class="query-text">${escapeHtml(q.query_summary)}</span>
+            <span class="query-time">${formatQueryTime(q.timestamp)}</span>
+        </div>
+    `).join('');
+}
+
+// Format query timestamp
+function formatQueryTime(timestamp) {
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diff = now - date;
+
+    // If today, show time only
+    if (diff < 86400000 && date.getDate() === now.getDate()) {
+        return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    }
+    // If this week, show day and time
+    if (diff < 604800000) {
+        return date.toLocaleDateString('en-US', { weekday: 'short' }) + ' ' +
+            date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    }
+    // Otherwise show date
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 function closeModal() {

@@ -66,9 +66,10 @@ router.get('/stats/:portfolioId', async (req, res) => {
     try {
         const portfolioId = parseInt(req.params.portfolioId);
 
-        const [stats, daywise] = await Promise.all([
+        const [stats, daywise, recentQueries] = await Promise.all([
             db.getPortfolioStats(portfolioId),
-            db.getDaywiseStats(portfolioId, 30)
+            db.getDaywiseStats(portfolioId, 30),
+            db.getRecentQueries(portfolioId, 50)
         ]);
 
         res.json({
@@ -80,7 +81,8 @@ router.get('/stats/:portfolioId', async (req, res) => {
                 first_interaction: stats.first_interaction,
                 last_interaction: stats.last_interaction
             },
-            daywise
+            daywise,
+            recent_queries: recentQueries
         });
     } catch (error) {
         console.error('Error getting portfolio stats:', error);
