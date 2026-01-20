@@ -58,7 +58,8 @@ app.get('/health', (req, res) => {
 // OpenAPI schema endpoint (for Custom GPT configuration)
 app.get('/openapi.json', (req, res) => {
     const host = req.get('host');
-    const protocol = req.protocol;
+    // Always use HTTPS for production (Render terminates SSL at load balancer)
+    const protocol = host.includes('localhost') ? 'http' : 'https';
     const baseUrl = `${protocol}://${host}`;
 
     res.json({
