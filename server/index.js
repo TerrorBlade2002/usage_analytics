@@ -75,6 +75,7 @@ app.get('/openapi.json', (req, res) => {
             '/api/log': {
                 post: {
                     operationId: 'logInteraction',
+                    'x-openai-isConsequential': false,
                     summary: 'Log a user interaction',
                     description: 'Called after each user message to track analytics',
                     requestBody: {
