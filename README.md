@@ -42,10 +42,10 @@ npm run dev
 ╔════════════════════════════════════════════════════════════╗
 ║     GPT Analytics Middleware Server                        ║
 ╠════════════════════════════════════════════════════════════╣
-║  🚀 Server running on port 3000                            ║
-║  📊 Dashboard: http://localhost:3000/dashboard             ║
-║  📋 OpenAPI:   http://localhost:3000/openapi.json          ║
-║  ❤️  Health:   http://localhost:3000/health                ║
+║  🚀 Server running on port [PORT from .env]                ║
+║  📊 Dashboard: http://localhost:[PORT]/dashboard           ║
+║  📋 OpenAPI:   http://localhost:[PORT]/openapi.json        ║
+║  ❤️  Health:   http://localhost:[PORT]/health              ║
 ╚════════════════════════════════════════════════════════════╝
 ```
 
@@ -70,7 +70,7 @@ Your URL will be: `https://your-app.onrender.com`
 npm run dev
 
 # Terminal 2: Expose with ngrok
-ngrok http 3000
+ngrok http [PORT from .env]
 ```
 
 Use the ngrok HTTPS URL for Custom GPT configuration.
