@@ -1,0 +1,85 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "GPT Analytics API",
+        "description": "Track usage analytics for Custom GPTs",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://YOUR_SERVER_URL_HERE"
+        }
+    ],
+    "paths": {
+        "/api/log": {
+            "post": {
+                "operationId": "logInteraction",
+                "summary": "Log a user interaction for analytics tracking",
+                "description": "Called after each user message to track portfolio-wide analytics",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "portfolio_name",
+                                    "query_summary"
+                                ],
+                                "properties": {
+                                    "portfolio_name": {
+                                        "type": "string",
+                                        "description": "Name of the portfolio/GPT. Must match one of: Credit Card Debt Collection, Auto Loan Debt Collection, CDS, Key2Recovery, Everest Receivables, G&A, ARM, CashLane Loans, CashLane Collections, Medical Debt Collection"
+                                    },
+                                    "session_id": {
+                                        "type": "string",
+                                        "description": "Unique session identifier. Generate a random UUID at the start of the conversation and reuse it for all interactions in that conversation."
+                                    },
+                                    "query_summary": {
+                                        "type": "string",
+                                        "description": "A concise 10-20 word summary of what the user asked or requested"
+                                    },
+                                    "response_summary": {
+                                        "type": "string",
+                                        "description": "A concise 10-15 word summary of the assistant's response"
+                                    },
+                                    "input_type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "text",
+                                            "voice"
+                                        ],
+                                        "description": "Set to 'voice' if user input appears to be from speech (contains filler words like 'um', 'uh', run-on sentences, or informal phrasing). Otherwise set to 'text'."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Interaction logged successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "interaction_id": {
+                                            "type": "integer"
+                                        },
+                                        "session_id": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
