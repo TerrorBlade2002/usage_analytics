@@ -25,6 +25,7 @@ const CHART_COLORS = [
 // State
 let dailyChart = null;
 let distributionChart = null;
+let monthlyChart = null;
 let modalDailyChart = null;
 let modalRatioChart = null;
 let isLoading = false;
@@ -35,9 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initConveyorBelt();
     initCharts();
     refreshData();
+    fetchAnalytics();
 
     // Auto-refresh
     setInterval(refreshData, REFRESH_INTERVAL);
+    setInterval(fetchAnalytics, REFRESH_INTERVAL);
 
     // Close modal on Escape key
     document.addEventListener('keydown', (e) => {
@@ -506,3 +509,113 @@ function initModalCharts(daywise) {
         }
     });
 }
+
+// =====================
+// ANALYTICS (Top Performers & Monthly)
+// =====================
+
+async function fetchAnalytics() {
+    try {
+        const response = await fetch(`${API_BASE}/api/analytics`);
+        if (!response.ok) throw new Error('Failed to fetch analytics');
+        const data = await response.json();
+
+        // Update month labels
+        if (data.current_month) {
+            document.getElementById('current-month-label').textContent = data.current_month;
+        }
+        if (data.last_month) {
+            document.getElementById('last-month-label').textContent = data.last_month;
+        }
+
+        // Render top performers
+        renderTopPerformers('top-this-month', data.top_this_month || []);
+        renderTopPerformers('top-last-month', data.top_last_month || []);
+
+        // Initialize monthly chart
+        initMonthlyChart(data.monthwise || []);
+
+    } catch (error) {
+        console.error('Error fetching analytics:', error);
+    }
+}
+
+function renderTopPerformers(containerId, portfolios) {
+    const container = document.getElementById(containerId);
+
+    if (!portfolios || portfolios.length === 0) {
+        container.innerHTML = '<div class="top-empty">No data available</div>';
+        return;
+    }
+
+    const rankClasses = ['gold', 'silver', 'bronze'];
+
+    container.innerHTML = portfolios.map((p, index) => {
+        const info = getPortfolioInfo(p.name);
+        const rankClass = rankClasses[index] || '';
+
+        return `
+            <div class="top-item" onclick="openPortfolioModal(${p.id}, '${escapeHtml(p.name).replace(/'/g, "\\'")}')">
+                <div class="top-rank ${rankClass}">${index + 1}</div>
+                <div class="top-info">
+                    <div class="top-name">${escapeHtml(info.short)}</div>
+                    <div class="top-meta">${p.sessions} sessions</div>
+                </div>
+                <div class="top-value">${formatNumber(p.interactions)}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+function initMonthlyChart(monthwise) {
+    const ctx = document.getElementById('monthlyChart');
+    if (!ctx) return;
+
+    // Destroy existing chart
+    if (monthlyChart) monthlyChart.destroy();
+
+    if (!monthwise || monthwise.length === 0) {
+        monthlyChart = new Chart(ctx.getContext('2d'), {
+            type: 'bar',
+            data: { labels: ['No data'], datasets: [{ data: [0], backgroundColor: 'rgba(59, 130, 246, 0.7)' }] },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+        return;
+    }
+
+    monthlyChart = new Chart(ctx.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: monthwise.map(m => m.month_label),
+            datasets: [{
+                label: 'Interactions',
+                data: monthwise.map(m => parseInt(m.interactions) || 0),
+                backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                borderRadius: 6,
+                borderSkipped: false
+            }, {
+                label: 'Sessions',
+                data: monthwise.map(m => parseInt(m.sessions) || 0),
+                backgroundColor: 'rgba(139, 92, 246, 0.7)',
+                borderRadius: 6,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    align: 'end',
+                    labels: { usePointStyle: true, padding: 15, font: { size: 11, weight: 600 } }
+                }
+            },
+            scales: {
+                x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { size: 10 } } }
+            }
+        }
+    });
+}
+

@@ -160,6 +160,42 @@
                 </div>
             </section>
 
+            <!-- Top Performers Section -->
+            <section class="top-performers-section">
+                <!-- This Month -->
+                <div class="card top-card">
+                    <div class="card-header">
+                        <h2>🏆 Top Performers</h2>
+                        <span class="badge accent" id="current-month-label">This Month</span>
+                    </div>
+                    <div class="top-list" id="top-this-month">
+                        <div class="top-empty">No data yet</div>
+                    </div>
+                </div>
+
+                <!-- Last Month -->
+                <div class="card top-card">
+                    <div class="card-header">
+                        <h2>📊 Previous Month</h2>
+                        <span class="badge muted" id="last-month-label">Last Month</span>
+                    </div>
+                    <div class="top-list" id="top-last-month">
+                        <div class="top-empty">No data yet</div>
+                    </div>
+                </div>
+
+                <!-- Monthly Trend -->
+                <div class="card monthly-chart-card">
+                    <div class="card-header">
+                        <h2>📈 Monthly Trend</h2>
+                        <span class="badge">Last 12 Months</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
             <!-- Distribution Chart -->
             <section class="distribution-section">
                 <div class="card">

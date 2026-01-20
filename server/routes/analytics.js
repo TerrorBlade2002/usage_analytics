@@ -139,4 +139,27 @@ router.get('/portfolios', async (req, res) => {
     }
 });
 
+// GET /api/analytics - Get analytics summary (month-wise, top portfolios)
+router.get('/analytics', async (req, res) => {
+    try {
+        const [monthwise, topThisMonth, topLastMonth] = await Promise.all([
+            db.getMonthwiseStats(),
+            db.getTopPortfoliosThisMonth(3),
+            db.getTopPortfoliosLastMonth(3)
+        ]);
+
+        res.json({
+            monthwise,
+            top_this_month: topThisMonth,
+            top_last_month: topLastMonth,
+            current_month: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+            last_month: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+        });
+    } catch (error) {
+        console.error('Error getting analytics:', error);
+        res.status(500).json({ error: 'Failed to get analytics' });
+    }
+});
+
 module.exports = router;
+

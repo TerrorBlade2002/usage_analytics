@@ -184,6 +184,60 @@ async function getRecentQueries(portfolioId, limit = 50) {
   return result.rows;
 }
 
+// Get month-wise stats (last 12 months)
+async function getMonthwiseStats() {
+  const result = await pool.query(`
+    SELECT 
+      TO_CHAR(DATE_TRUNC('month', timestamp), 'YYYY-MM') as month,
+      TO_CHAR(DATE_TRUNC('month', timestamp), 'Mon YYYY') as month_label,
+      COUNT(*) as interactions,
+      COUNT(DISTINCT session_id) as sessions
+    FROM interactions
+    WHERE timestamp >= NOW() - INTERVAL '12 months'
+    GROUP BY DATE_TRUNC('month', timestamp)
+    ORDER BY DATE_TRUNC('month', timestamp) ASC
+  `);
+  return result.rows;
+}
+
+// Get top portfolios for current month
+async function getTopPortfoliosThisMonth(limit = 3) {
+  const result = await pool.query(`
+    SELECT 
+      p.id,
+      p.name,
+      COUNT(i.id) as interactions,
+      COUNT(DISTINCT i.session_id) as sessions
+    FROM portfolios p
+    LEFT JOIN interactions i ON p.id = i.portfolio_id
+      AND DATE_TRUNC('month', i.timestamp) = DATE_TRUNC('month', NOW())
+    GROUP BY p.id, p.name
+    HAVING COUNT(i.id) > 0
+    ORDER BY interactions DESC
+    LIMIT $1
+  `, [limit]);
+  return result.rows;
+}
+
+// Get top portfolios for previous month
+async function getTopPortfoliosLastMonth(limit = 3) {
+  const result = await pool.query(`
+    SELECT 
+      p.id,
+      p.name,
+      COUNT(i.id) as interactions,
+      COUNT(DISTINCT i.session_id) as sessions
+    FROM portfolios p
+    LEFT JOIN interactions i ON p.id = i.portfolio_id
+      AND DATE_TRUNC('month', i.timestamp) = DATE_TRUNC('month', NOW() - INTERVAL '1 month')
+    GROUP BY p.id, p.name
+    HAVING COUNT(i.id) > 0
+    ORDER BY interactions DESC
+    LIMIT $1
+  `, [limit]);
+  return result.rows;
+}
+
 module.exports = {
   pool,
   initializeDatabase,
@@ -193,5 +247,9 @@ module.exports = {
   getAllPortfoliosWithStats,
   getTodayStats,
   getPortfolios,
-  getRecentQueries
+  getRecentQueries,
+  getMonthwiseStats,
+  getTopPortfoliosThisMonth,
+  getTopPortfoliosLastMonth
 };
+

@@ -967,3 +967,138 @@ body {
     padding: 2rem;
     font-size: 0.875rem;
 }
+
+/* Top Performers Section */
+.top-performers-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.5fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 1200px) {
+    .top-performers-section {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .monthly-chart-card {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .top-performers-section {
+        grid-template-columns: 1fr;
+    }
+
+    .monthly-chart-card {
+        grid-column: span 1;
+    }
+}
+
+.top-card {
+    min-height: 200px;
+}
+
+.badge.accent {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    color: white;
+}
+
+.badge.muted {
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+}
+
+.top-list {
+    padding: 0.5rem 0;
+}
+
+.top-item {
+    display: flex;
+    align-items: center;
+    padding: 0.875rem 1rem;
+    gap: 1rem;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+}
+
+.top-item:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+    transform: translateX(4px);
+}
+
+.top-rank {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+}
+
+.top-rank.gold {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: white;
+    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+}
+
+.top-rank.silver {
+    background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+    color: white;
+    box-shadow: 0 2px 8px rgba(148, 163, 184, 0.4);
+}
+
+.top-rank.bronze {
+    background: linear-gradient(135deg, #d97706, #b45309);
+    color: white;
+    box-shadow: 0 2px 8px rgba(180, 83, 9, 0.4);
+}
+
+.top-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.top-name {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.top-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.top-value {
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: var(--accent-blue);
+    min-width: 50px;
+    text-align: right;
+}
+
+.top-empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 2rem 1rem;
+    font-size: 0.875rem;
+}
+
+.monthly-chart-card {
+    min-height: 200px;
+}
+
+.monthly-chart-card .chart-container {
+    height: 200px;
+}
