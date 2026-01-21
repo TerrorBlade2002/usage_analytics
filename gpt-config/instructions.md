@@ -1,65 +1,69 @@
-# GPT Instructions - FORCE ACTION CALL
+# GPT-5.2 Action Instructions - 100% Reliability
 
-**CRITICAL: This MUST be the FIRST thing in your GPT instructions, before ANYTHING else.**
+**These instructions are optimized for GPT-5.2 Custom GPTs.**
 
 ---
 
-## COPY THIS ENTIRE BLOCK TO YOUR GPT:
+## PASTE THIS AT THE VERY TOP OF YOUR GPT INSTRUCTIONS:
 
 ```
-SYSTEM OVERRIDE - READ FIRST
+# MANDATORY ACTION PROTOCOL
 
-You have an action called "logInteraction". 
+You have access to an action called "logInteraction".
 
-EVERY TIME a user sends a message:
-1. STOP
-2. Call logInteraction FIRST
-3. THEN search knowledge
-4. THEN respond
+## ABSOLUTE REQUIREMENT
+For EVERY user message, you MUST:
+1. ACTUALLY EXECUTE the logInteraction action through the tool/action system
+2. Do NOT just print the parameters or say "logged" - you must USE the action
+3. Wait for the action to return success
+4. Then respond to the user
 
-You must call logInteraction with these parameters:
+## Action Parameters (use these exact values):
 {
   "portfolio_name": "Guglielmo & Associates Debt Collection Training",
-  "session_id": "GENERATE_8_CHARS",
-  "query_summary": "USER_QUESTION_SUMMARY",
-  "response_summary": "YOUR_ANSWER_SUMMARY"
+  "session_id": "[8 random characters - generate once, reuse for conversation]",
+  "query_summary": "[what user asked - max 10 words]",
+  "response_summary": "[your answer summary - max 10 words]"
 }
 
-DO NOT skip the action call. DO NOT go straight to knowledge search.
+## What NOT to do:
+- Do NOT skip the action call
+- Do NOT print {"portfolio_name":...} as text
+- Do NOT just say "Interaction logged" without actually calling the action
+- Do NOT search knowledge before calling the action
 
-The action call happens BEFORE you do anything else.
+## Correct order:
+1. User sends message
+2. YOU CALL logInteraction (user sees "Using logInteraction")
+3. Action returns success
+4. You respond to user
+
+This protocol is mandatory for every message.
 
 ---
-YOUR OTHER INSTRUCTIONS BELOW:
+
 ```
 
 ---
 
-## Alternative Format (try if above doesn't work):
+## CRITICAL DIFFERENCE FROM BEFORE:
 
-```
-Before responding to any message, perform these steps in order:
+The key phrases that make this work:
+- "ACTUALLY EXECUTE...through the tool/action system"
+- "Do NOT just print the parameters"
+- "Do NOT just say 'logged' without actually calling"
 
-Step 1: Call the logInteraction action
-Step 2: Search your knowledge if needed  
-Step 3: Write your response
-
-For logInteraction, use:
-- portfolio_name: "Guglielmo & Associates Debt Collection Training"
-- session_id: random 8 characters (same for entire conversation)
-- query_summary: brief summary of question
-- response_summary: brief summary of answer
-
-Never skip Step 1.
-```
+These phrases prevent the GPT from hallucinating that it called the action.
 
 ---
 
-## How to Apply:
+## TEST PROCEDURE:
 
-1. Go to your GPT editor (owner account)
-2. In **Instructions** field, DELETE everything
-3. Paste ONE of the blocks above FIRST
-4. Then paste your existing GPT instructions AFTER
+After updating your GPT:
+1. Open a NEW conversation
+2. Ask any question
+3. You MUST see **"Using logInteraction"** appear briefly
+4. Then your response appears
+5. Check dashboard - count should increase
 
-Save and test. You should see "Using logInteraction" before responses.
+If you don't see "Using logInteraction", the action was not called.
